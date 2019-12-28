@@ -52,6 +52,8 @@ std::string Ram(int pid);
 std::string Uid(int pid);
 std::string User(int pid);
 long int UpTime(int pid);
+std::string ProcessStatus(const int pid);
+std::string ReadProcStat(const std::string keyToFind);
 };  // namespace LinuxParser
 
 #endif

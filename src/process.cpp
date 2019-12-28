@@ -5,29 +5,49 @@
 #include <vector>
 
 #include "process.h"
+#include "linux_parser.h"
 
 using std::string;
 using std::to_string;
 using std::vector;
 
-// TODO: Return this process's ID
-int Process::Pid() { return 0; }
+void Process::init() {
+    _command = LinuxParser::Command(_pid);
+    _uid = LinuxParser::Uid(_pid);
+    _user = LinuxParser::User(_pid);
+    _upTime = LinuxParser::UpTime(_pid);
+    _ramUsage = LinuxParser::Ram(_pid);
+    processStatus();
+}
 
-// TODO: Return this process's CPU utilization
-float Process::CpuUtilization() { return 0; }
+int Process::Pid() { return _pid; }
 
-// TODO: Return the command that generated this process
-string Process::Command() { return string(); }
+float Process::CpuUtilization() { return _cpuUtilization; }
 
-// TODO: Return this process's memory utilization
-string Process::Ram() { return string(); }
+string Process::Command() { return _command; }
 
-// TODO: Return the user (name) that generated this process
-string Process::User() { return string(); }
+string Process::Ram() { return _ramUsage; }
 
-// TODO: Return the age of this process (in seconds)
-long int Process::UpTime() { return 0; }
+string Process::User() { return _user; }
 
-// TODO: Overload the "less than" comparison operator for Process objects
-// REMOVE: [[maybe_unused]] once you define the function
-bool Process::operator<(Process const& a[[maybe_unused]]) const { return true; }
+long int Process::UpTime() { return _upTime; }
+
+bool Process::isRunning() const { return _status == ProcessStatus::Running; }
+
+// TODO: Sort by the PID?
+bool Process::operator<(Process const& a) const { 
+    return _pid < a._pid;
+}
+
+void Process::processStatus() {
+    std::string status = LinuxParser::ProcessStatus(_pid);
+    
+    if(status == "S") _status = ProcessStatus::Sleeping;
+    else if(status == "R") _status = ProcessStatus::Running;
+    else if(status == "D") _status = ProcessStatus::DiskSleep;
+    else if(status == "T") _status = ProcessStatus::Stopped;
+    else if(status == "t") _status = ProcessStatus::TracingStop;
+    else if(status == "Z") _status = ProcessStatus::Zombie;
+    else if(status == "X") _status = ProcessStatus::Dead;
+    else _status = ProcessStatus::Sleeping; // Sleeping by default, in case of unexpected/older states
+}
