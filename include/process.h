@@ -17,7 +17,6 @@ class Process {
   float CpuUtilization();
   std::string Ram();
   long int UpTime();
-  bool isRunning() const;
   bool operator<(Process const& a) const;
 
  private:
