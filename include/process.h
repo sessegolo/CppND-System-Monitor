@@ -19,9 +19,8 @@ enum class ProcessStatus {
 
 class Process {
  public:
-  Process(const int pid) : _pid(pid), _uid(), _user(), 
-               _command(), _cpuUtilization(), _ramUsage(), 
-              _upTime(), _status(ProcessStatus::Running) 
+  Process(const int pid) : _pid(pid), _user(), 
+               _command(), _status(ProcessStatus::Sleeping) 
   {
     init();
   };
@@ -36,20 +35,14 @@ class Process {
   bool operator<(Process const& a) const;
 
   // Inline functions
-  inline std::string Uid() { return _uid; }
-  inline ProcessStatus Status() { return _status; } // i dont think I need this anymore
+  inline ProcessStatus Status() { return _status; } // to be used later
 
-  // TODO: Declare any necessary private members
  private:
   void init();
   void processStatus();
   int _pid;
-  std::string _uid;
   std::string _user;
   std::string _command;
-  float _cpuUtilization;
-  std::string _ramUsage;
-  long int _upTime;
   ProcessStatus _status;
 };
 
