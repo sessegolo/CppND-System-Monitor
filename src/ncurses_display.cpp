@@ -1,12 +1,14 @@
+#include "ncurses_display.h"
+
 #include <curses.h>
+
+#include <algorithm>
 #include <chrono>
 #include <string>
 #include <thread>
 #include <vector>
-#include <algorithm>
 
 #include "format.h"
-#include "ncurses_display.h"
 #include "system.h"
 
 using std::string;
@@ -70,7 +72,7 @@ void NCursesDisplay::DisplayProcesses(std::vector<Process>& processes,
   mvwprintw(window, row, time_column, "TIME+");
   mvwprintw(window, row, command_column, "COMMAND");
   wattroff(window, COLOR_PAIR(2));
-  
+
   std::sort(processes.rbegin(), processes.rend());
 
   for (int i = 0; i < n; ++i) {

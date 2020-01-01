@@ -1,8 +1,9 @@
 #include "processor.h"
+
 #include "linux_parser.h"
 
 void Processor::readCpuData(const std::vector<std::string>& cpuData) {
-  if(cpuData.size() < 10) return;
+  if (cpuData.size() < 10) return;
   _user = std::stol(cpuData[LinuxParser::CPUStates::kUser_]);
   _nice = std::stol(cpuData[LinuxParser::CPUStates::kNice_]);
   _system = std::stol(cpuData[LinuxParser::CPUStates::kSystem_]);
@@ -18,12 +19,14 @@ void Processor::readCpuData(const std::vector<std::string>& cpuData) {
 float Processor::Utilization() {
   float usage{0.0};
   std::vector<std::string> cpuData = LinuxParser::CpuUtilization();
-  if(_validData) {
+  if (_validData) {
     // store previous values
-    float prevUser{_user}, prevNice{_nice}, prevSystem{_system}, 
-          prevIdle{_idle}, prevIowait{_iowait}, prevIrq{_irq}, 
-          prevSoftirq{_softirq}, prevSteal{_steal}; // prevGuest{_guest}, prevGuestNice{_guest_nice}; both not used
-    
+    float prevUser{_user}, prevNice{_nice}, prevSystem{_system},
+        prevIdle{_idle}, prevIowait{_iowait}, prevIrq{_irq},
+        prevSoftirq{_softirq},
+        prevSteal{_steal};  // prevGuest{_guest}, prevGuestNice{_guest_nice};
+                            // both not used
+
     // read new values
     readCpuData(cpuData);
 
@@ -32,7 +35,8 @@ float Processor::Utilization() {
     float totalPrevIdle = prevIdle + prevIowait;
     float idle = _idle + _iowait;
 
-    float totalPrevNonIdle = prevUser + prevNice + prevSystem + prevIrq + prevSoftirq + prevSteal;
+    float totalPrevNonIdle =
+        prevUser + prevNice + prevSystem + prevIrq + prevSoftirq + prevSteal;
     float nonIdle = _user + _nice + _system + _irq + _softirq + _steal;
 
     float totalPrev = totalPrevIdle + totalPrevNonIdle;
@@ -41,9 +45,8 @@ float Processor::Utilization() {
     float deltaTotal = total - totalPrev;
     float deltaIdle = idle - totalPrevIdle;
 
-    usage = (deltaTotal - deltaIdle)/deltaTotal;
-  }
-  else {
+    usage = (deltaTotal - deltaIdle) / deltaTotal;
+  } else {
     // initialize member variables with current value
     readCpuData(cpuData);
     _validData = true;
