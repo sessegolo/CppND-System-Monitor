@@ -3,7 +3,7 @@
 #include <dirent.h>
 #include <unistd.h>
 
-#include <filesystem>
+#include <experimental/filesystem>
 #include <iostream>
 #include <regex>
 #include <string>
@@ -89,12 +89,31 @@ string LinuxParser::Kernel() {
   return kernel;
 }
 
+// Udacity Workspace fails to compile the following code
+// Due to missing #include <filesystem>
+/*vector<int> LinuxParser::Pids() {
+  vector<int> pids{};
+  std::experimental::filesystem::path procDirPath(kProcDirectory);
+  for (const std::experimental::filesystem::directory_entry& dir :
+       std::experimental::filesystem::directory_iterator(procDirPath)) {
+    if (std::experimental::filesystem::is_directory(dir.path())) {
+      string filename = dir.path().filename();
+      if (std::all_of(filename.begin(), filename.end(), isdigit)) {
+        pids.emplace_back(stoi(filename));
+      }
+    }
+  }
+  return pids;
+}*/
+
+// Code re-implemented using std::experimental::filesystem
+// To be able to compile in Udacity Workspace
 vector<int> LinuxParser::Pids() {
   vector<int> pids{};
-  std::filesystem::path procDirPath(kProcDirectory);
-  for (const std::filesystem::directory_entry& dir :
-       std::filesystem::directory_iterator(procDirPath)) {
-    if (dir.is_directory()) {
+  std::experimental::filesystem::path procDirPath(kProcDirectory);
+  for (const std::experimental::filesystem::directory_entry& dir :
+       std::experimental::filesystem::directory_iterator(procDirPath)) {
+    if (std::experimental::filesystem::is_directory(dir.path())) {
       string filename = dir.path().filename();
       if (std::all_of(filename.begin(), filename.end(), isdigit)) {
         pids.emplace_back(stoi(filename));
