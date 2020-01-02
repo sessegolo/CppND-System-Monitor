@@ -144,7 +144,7 @@ float LinuxParser::MemoryUtilization() {
   stream.close();
   long total = stol(memTotal);
   long free = stol(memFree);
-  return (total - free) / (total * 1.0);
+  return (total - free) / static_cast<float>(total);
 }
 
 long LinuxParser::UpTime() {
@@ -205,7 +205,7 @@ int LinuxParser::RunningProcesses() {
 
 float LinuxParser::CpuUtilization(const int pid) {
   long systemUptime = UpTime();
-  float clk = sysconf(_SC_CLK_TCK) + 0.0;
+  float clk = static_cast<float>(sysconf(_SC_CLK_TCK));
   long userCodeTime = stol(readProcStat(pid, 14));
   long kernelCodeTime = stol(readProcStat(pid, 15));
   long childrenUserCodeTime = stol(readProcStat(pid, 16));
@@ -217,7 +217,7 @@ float LinuxParser::CpuUtilization(const int pid) {
                    childrenKernelCodeTime;
   long seconds = systemUptime - procUpTime;
 
-  float usage = (totalTime / clk) / seconds;
+  float usage = seconds > 0 ? (totalTime / clk) / seconds : 0.0;
   return usage;
 }
 

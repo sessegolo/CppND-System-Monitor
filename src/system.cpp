@@ -19,7 +19,7 @@ using std::vector;
 
 namespace {
 void setupProcesses(std::vector<Process>& processes) {
-  processes.clear();
+  processes.clear(); // To get rid of dead/killed processes
   for (int pid : LinuxParser::Pids()) {
     Process process(pid);
     processes.push_back(process);

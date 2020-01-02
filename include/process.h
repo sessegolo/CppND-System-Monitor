@@ -9,7 +9,7 @@ It contains relevant attributes as shown below
 
 class Process {
  public:
-  Process(const int pid) : _pid(pid), _user(), _command() { init(); };
+  Process(const int pid) : _pid(pid), _cpu(0.0), _user(), _command() { init(); };
 
   int Pid();
   std::string User();
@@ -22,6 +22,7 @@ class Process {
  private:
   void init();
   int _pid;
+  float _cpu;
   std::string _user;
   std::string _command;
 };

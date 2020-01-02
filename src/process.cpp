@@ -16,11 +16,12 @@ using std::vector;
 void Process::init() {
   _command = LinuxParser::Command(_pid);
   _user = LinuxParser::User(_pid);
+  _cpu = LinuxParser::CpuUtilization(_pid);
 }
 
 int Process::Pid() { return _pid; }
 
-float Process::CpuUtilization() { return LinuxParser::CpuUtilization(_pid); }
+float Process::CpuUtilization() { return _cpu; }
 
 string Process::Command() { return _command; }
 
@@ -30,4 +31,4 @@ string Process::User() { return _user; }
 
 long int Process::UpTime() { return LinuxParser::UpTime(_pid); }
 
-bool Process::operator<(Process const& a) const { return _pid < a._pid; }
+bool Process::operator<(Process const& a) const { return _cpu < a._cpu; }

@@ -21,7 +21,7 @@ float Processor::Utilization() {
   std::vector<std::string> cpuData = LinuxParser::CpuUtilization();
   if (_validData) {
     // store previous values
-    float prevUser{_user}, prevNice{_nice}, prevSystem{_system},
+    const float prevUser{_user}, prevNice{_nice}, prevSystem{_system},
         prevIdle{_idle}, prevIowait{_iowait}, prevIrq{_irq},
         prevSoftirq{_softirq},
         prevSteal{_steal};  // prevGuest{_guest}, prevGuestNice{_guest_nice};
@@ -32,20 +32,20 @@ float Processor::Utilization() {
 
     // math from Stack Overflow
     // https://stackoverflow.com/questions/23367857/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux
-    float totalPrevIdle = prevIdle + prevIowait;
-    float idle = _idle + _iowait;
+    const float totalPrevIdle = prevIdle + prevIowait;
+    const float idle = _idle + _iowait;
 
-    float totalPrevNonIdle =
+    const float totalPrevNonIdle =
         prevUser + prevNice + prevSystem + prevIrq + prevSoftirq + prevSteal;
-    float nonIdle = _user + _nice + _system + _irq + _softirq + _steal;
+    const float nonIdle = _user + _nice + _system + _irq + _softirq + _steal;
 
-    float totalPrev = totalPrevIdle + totalPrevNonIdle;
-    float total = idle + nonIdle;
+    const float totalPrev = totalPrevIdle + totalPrevNonIdle;
+    const float total = idle + nonIdle;
 
-    float deltaTotal = total - totalPrev;
-    float deltaIdle = idle - totalPrevIdle;
-
-    usage = (deltaTotal - deltaIdle) / deltaTotal;
+    const float deltaTotal = total - totalPrev;
+    const float deltaIdle = idle - totalPrevIdle;
+    
+    usage = deltaTotal > 0 ? (deltaTotal - deltaIdle) / deltaTotal : 0.0;
   } else {
     // initialize member variables with current value
     readCpuData(cpuData);
